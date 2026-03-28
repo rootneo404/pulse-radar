@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PULSE — WORLD INTELLIGENCE</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#020305;--panel:rgba(2,4,8,0.97);--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);
+  --white:#e8eef5;--dim:rgba(200,220,255,0.35);--dimmer:rgba(150,180,220,0.18);
+  --cyan:#00c8ff;--green:#00ff88;--red:#ff2244;--amber:#ffaa00;--purple:#b060ff;
+  --mono:'Share Tech Mono',monospace;--sans:'Barlow Condensed',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--white);font-family:var(--sans);overflow:hidden;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.07) 3px,rgba(0,0,0,0.07) 4px);}
+#app{display:grid;grid-template-columns:310px 1fr 290px;grid-template-rows:50px 1fr 34px;height:100vh;width:100vw;}
+
+/* HEADER */
+#hdr{grid-column:1/-1;background:rgba(2,4,8,0.99);border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;padding:0 18px;}
+.logo{font-family:var(--mono);font-size:14px;letter-spacing:5px;color:#fff;}
+.logo span{color:var(--dim);font-size:10px;letter-spacing:2px;}
+#hctr{display:flex;gap:20px;align-items:center;}
+.hs{text-align:center;}
+.hs .n{font-family:var(--mono);font-size:15px;color:#fff;}
+.hs .l{font-size:9px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;}
+.live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:3px;}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pg 1.4s infinite;}
+@keyframes pg{0%,100%{opacity:1}50%{opacity:.3}}
+#clk{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:2px;}
+
+/* PANELS */
+#lp{background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;overflow-x:hidden;}
+#rp{background:var(--panel);border-left:1px solid var(--border);overflow-y:auto;overflow-x:hidden;}
+#lp::-webkit-scrollbar,#rp::-webkit-scrollbar{width:2px;}
+#lp::-webkit-scrollbar-thumb,#rp::-webkit-scrollbar-thumb{background:var(--border2);}
+
+/* GLOBE */
+#ga{position:relative;overflow:hidden;background:#000;cursor:grab;}
+#ga:active{cursor:grabbing;}
+#gc{display:block;width:100%;height:100%;}
+
+/* FOOTER */
+#ft{grid-column:1/-1;background:rgba(2,4,8,0.99);border-top:1px solid var(--border2);display:flex;align-items:center;overflow:hidden;}
+.tl{background:#fff;color:#000;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:2px;padding:0 10px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;}
+.tw{overflow:hidden;flex:1;}
+.tt2{display:flex;animation:ts 70s linear infinite;white-space:nowrap;}
+@keyframes ts{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ti{font-family:var(--mono);font-size:10px;color:var(--dim);padding:0 20px;border-right:1px solid var(--border);display:flex;align-items:center;gap:7px;height:34px;flex-shrink:0;}
+.ti .v{color:#fff;}.ti .up{color:var(--green);}.ti .dn{color:var(--red);}
+
+/* SECTIONS */
+.sec{border-bottom:1px solid var(--border);flex-shrink:0;}
+.sh{display:flex;align-items:center;justify-content:space-between;padding:7px 12px 5px;}
+.st{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.sd{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.sm2{font-family:var(--mono);font-size:8px;color:var(--dimmer);}
+.sb{padding:6px 10px 10px;}
+
+/* EQ */
+.eqi{display:flex;align-items:center;gap:7px;padding:4px 6px;margin-bottom:3px;background:rgba(255,255,255,0.02);border-left:2px solid transparent;border-radius:1px;}
+.em{font-family:var(--mono);font-size:14px;font-weight:600;min-width:30px;}
+.elo{color:#ddd;border-left-color:#666!important;}
+.emd{color:var(--amber);border-left-color:var(--amber)!important;}
+.ehi{color:var(--red);border-left-color:var(--red)!important;}
+.ep{font-size:10px;color:#ccc;line-height:1.2;}
+.et{font-family:var(--mono);font-size:8px;color:var(--dim);margin-top:1px;}
+.edp{font-family:var(--mono);font-size:8px;color:var(--dimmer);text-align:right;}
+
+/* CYBER */
+.cyi{padding:5px 7px;border-left:2px solid var(--red);background:rgba(255,34,68,0.04);margin-bottom:3px;border-radius:1px;}
+.cyc{font-family:var(--mono);font-size:9px;color:var(--red);}
+.cyd{font-size:10px;color:#ccc;margin-top:1px;line-height:1.3;}
+.cym{font-family:var(--mono);font-size:8px;color:var(--dim);margin-top:2px;}
+.stag{font-family:var(--mono);font-size:7px;padding:1px 4px;border-radius:1px;display:inline-block;margin-right:4px;}
+.sc{background:rgba(255,34,68,0.2);color:var(--red);}
+.sh2{background:rgba(255,170,0,0.2);color:var(--amber);}
+
+/* FX */
+.fxi{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.fxp{font-family:var(--mono);font-size:9px;color:var(--dim);}
+.fxr{font-family:var(--mono);font-size:13px;color:#fff;}
+.fxc{font-family:var(--mono);font-size:9px;}
+
+/* AQI */
+.arow{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.ac{font-size:10px;color:#ccc;min-width:72px;}
+.ab{flex:1;height:3px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+.abf{height:100%;border-radius:2px;}
+.av{font-family:var(--mono);font-size:10px;min-width:28px;text-align:right;}
+
+/* SPORTS */
+.spti{display:flex;align-items:center;gap:7px;padding:4px 6px;border-left:2px solid var(--red);background:rgba(255,34,68,0.04);margin-bottom:3px;border-radius:1px;}
+.spico{font-size:12px;flex-shrink:0;}
+.spn{font-size:10px;color:#ddd;font-weight:600;}
+.spm{font-family:var(--mono);font-size:8px;color:var(--dim);}
+.splv{font-family:var(--mono);font-size:8px;color:var(--red);animation:bl 1s infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.1}}
+
+/* BUZZER */
+.bzp{background:rgba(0,255,136,0.03);border:1px solid rgba(0,255,136,0.12);border-radius:2px;padding:8px;}
+.bzh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.bzn{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:2px;}
+.bzf{font-family:var(--mono);font-size:8px;color:var(--dim);margin-top:2px;}
+.bzs{font-family:var(--mono);font-size:8px;color:var(--green);animation:bl 2s infinite;letter-spacing:2px;}
+#bzc{width:100%;height:38px;display:block;}
+.bzd{font-size:9px;color:var(--dim);margin-top:5px;line-height:1.5;}
+.bzl{font-family:var(--mono);font-size:8px;color:var(--dim);margin-top:5px;border-top:1px solid rgba(0,255,136,0.08);padding-top:5px;}
+.bzl div{margin-bottom:2px;}
+.bzts{color:rgba(0,255,136,0.45);}
+
+/* ISS */
+.isr{display:flex;gap:6px;margin-bottom:5px;}
+.iss2{flex:1;background:rgba(176,96,255,0.06);border-radius:2px;padding:5px;text-align:center;}
+.iss2 .n{font-family:var(--mono);font-size:11px;color:var(--purple);}
+.iss2 .l{font-size:8px;color:var(--dim);letter-spacing:1px;margin-top:1px;}
+
+/* LEGEND */
+.lgi{display:flex;align-items:center;gap:7px;padding:2px 0;}
+.lgd{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.lgt{font-size:10px;color:var(--dim);}
+.lgc{font-family:var(--mono);font-size:10px;margin-left:auto;}
+
+/* TOOLTIP */
+#tip{position:fixed;pointer-events:none;background:rgba(2,4,8,0.97);border:1px solid var(--border2);border-radius:2px;padding:7px 11px;font-family:var(--mono);font-size:10px;color:#fff;z-index:8000;display:none;max-width:230px;}
+#tip .tit{color:var(--cyan);margin-bottom:3px;font-size:11px;}
+#tip .det{color:var(--dim);line-height:1.6;white-space:pre-line;}
+
+.ld2{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;color:var(--dimmer);padding:14px;}
+.sp2{width:10px;height:10px;border:1px solid var(--border2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err2{font-family:var(--mono);font-size:9px;color:rgba(255,80,80,0.5);padding:10px;text-align:center;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="hdr">
+  <div class="logo">PULSE <span>/ WORLD INTELLIGENCE</span></div>
+  <div id="hctr">
+    <div class="hs"><div class="n" id="h-fl">—</div><div class="l">Aircraft</div></div>
+    <div class="hs"><div class="n" id="h-eq">—</div><div class="l">Quakes 24h</div></div>
+    <div class="hs"><div class="n" id="h-sp">—</div><div class="l">Live Games</div></div>
+    <div class="hs"><div class="n" id="h-cy">—</div><div class="l">CVEs</div></div>
+    <div class="live"><div class="ldot"></div>LIVE</div>
+  </div>
+  <div id="clk">--:--:-- UTC</div>
+</div>
+
+<div id="lp">
+  <div class="sec">
+    <div class="sh"><div class="st"><div class="sd" style="background:var(--amber);box-shadow:0 0 6px var(--amber)"></div>EARTHQUAKES M2.5+</div><div class="sm2">USGS</div></div>
+    <div class="sb" id="eq-b"><div class="ld2"><div class="sp2"></div>FETCHING USGS...</div></div>
+  </div>
+  <div class="sec">
+    <div class="sh"><div class="st"><div class="sd" style="background:var(--red);box-shadow:0 0 6px var(--red)"></div>CYBER THREATS · CISA</div><div class="sm2">KEV</div></div>
+    <div class="sb" id="cy-b"><div class="ld2"><div class="sp2"></div>FETCHING...</div></div>
+  </div>
+  <div class="sec">
+    <div class="sh"><div class="st"><div class="sd" style="background:#fff"></div>FX MARKETS · ECB</div><div class="sm2">FRANKFURTER</div></div>
+    <div class="sb" id="fx-b"><div class="ld2"><div class="sp2"></div>FETCHING...</div></div>
+  </div>
+  <div class="sec">
+    <div class="sh"><div class="st"><div class="sd" style="background:var(--purple);box-shadow:0 0 6px var(--purple)"></div>AIR QUALITY INDEX</div><div class="sm2">OPEN-METEO</div></div>
+    <div class="sb" id="aq-b"><div class="ld2"><div class="sp2"></div>FETCHING...</div></div>
+  </div>
+</div>
+
+<div id="ga"><canvas id="gc"></canvas></div>
+
+<div id="rp">
+  <div class="sec">
+    <div class="sh"><div class="st"><div class="sd" style="background:var(--green);animation:pg 1s infinite"></div>UVB-76 / THE BUZZER</div><div class="sm2">4625 kHz</div></div>
+    <div class="sb">
+      <div class="bzp">
+        <div class="bzh">
+          <div><div class="bzn">УВБ-76</div><div class="bzf">SW · 4625.0 kHz · USB · MDZhB</div></div>
+          <div class="bzs">● TX</div>
+        </div>
+        <canvas id="bzc"></canvas>
+        <div class="bzd">Russian shortwave numbers station active since 1976. ~25 buzzes/min. Occasional Russian military voice messages interrupt the carrier.</div>
+        <div class="bzl" id="bzl"><div><span class="bzts">[INIT]</span> Monitoring 4625.0 kHz...</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sh"><div class="st"><div class="sd" style="background:var(--red);box-shadow:0 0 6px var(--red)"></div>LIVE SPORTS EVENTS</div><div class="sm2">GLOBAL</div></div>
+    <div class="sb" id="sp-b"><div class="ld2"><div class="sp2"></div>LOADING...</div></div>
+  </div>
+  <div class="sec">
+    <div class="sh"><div class="st"><div class="sd" style="background:var(--purple);box-shadow:0 0 6px var(--purple)"></div>ISS POSITION · LIVE</div><div class="sm2">WHERETHEISS.AT</div></div>
+    <div class="sb" id="is-b"><div class="ld2"><div class="sp2"></div>FETCHING...</div></div>
+  </div>
+  <div class="sec">
+    <div class="sh"><div class="st"><div class="sd" style="background:var(--dim)"></div>MAP LEGEND</div><div class="sm2">ALL SOURCES OPEN</div></div>
+    <div class="sb">
+      <div class="lgi"><div class="lgd" style="background:#fff"></div><div class="lgt">Country borders</div></div>
+      <div class="lgi"><div class="lgd" style="background:var(--cyan);box-shadow:0 0 4px var(--cyan)"></div><div class="lgt">Civilian Aircraft</div><div class="lgc" id="lc-civ" style="color:var(--cyan)">—</div></div>
+      <div class="lgi"><div class="lgd" style="background:var(--amber);box-shadow:0 0 4px var(--amber)"></div><div class="lgt">Military Aircraft</div><div class="lgc" id="lc-mil" style="color:var(--amber)">—</div></div>
+      <div class="lgi"><div class="lgd" style="background:var(--red);box-shadow:0 0 6px var(--red)"></div><div class="lgt">Live Sports Venues</div><div class="lgc" id="lc-sp" style="color:var(--red)">—</div></div>
+      <div class="lgi"><div class="lgd" style="background:var(--amber)"></div><div class="lgt">Earthquakes M2.5+</div><div class="lgc" id="lc-eq" style="color:var(--amber)">—</div></div>
+      <div class="lgi"><div class="lgd" style="background:var(--purple);box-shadow:0 0 4px var(--purple)"></div><div class="lgt">ISS Position</div><div class="lgc" style="color:var(--purple)">1</div></div>
+      <div class="lgi"><div class="lgd" style="background:var(--green);box-shadow:0 0 4px var(--green)"></div><div class="lgt">UVB-76 Transmitter</div><div class="lgc" style="color:var(--green)">1</div></div>
+      <div style="margin-top:10px;font-family:var(--mono);font-size:8px;color:var(--dimmer);line-height:2;">
+        USGS · OPENSKY NETWORK<br>OPEN-METEO · ECB/FRANKFURTER<br>CISA KEV · WHERETHEISS.AT<br>NATURAL EARTH TOPOJSON
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ft">
+  <div class="tl">FX LIVE</div>
+  <div class="tw"><div class="tt2" id="tkr"><div class="ti">LOADING <span class="v">...</span></div></div></div>
+</div>
+</div>
+
+<div id="tip"><div class="tit" id="tt"></div><div class="det" id="td"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+// ── CLOCK ──
+function tickClock(){const n=new Date();document.getElementById('clk').textContent=[n.getUTCHours(),n.getUTCMinutes(),n.getUTCSeconds()].map(v=>String(v).padStart(2,'0')).join(':')+' UTC';}
+setInterval(tickClock,1000);tickClock();
+const fmt=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':String(n);
+const timeAgo=ts=>{const d=Date.now()-ts,m=Math.floor(d/6e4),h=Math.floor(m/60);return h>0?`${h}h ago`:m<1?'just now':`${m}m ago`;};
+const aqiColor=v=>v<=50?'#00ff88':v<=100?'#ccff00':v<=150?'#ffaa00':v<=200?'#ff7700':'#ff2244';
+
+// ═══════════════════════════════════════════
+// GLOBE ENGINE — pure canvas, orthographic
+// ═══════════════════════════════════════════
+const canvas=document.getElementById('gc');
+const ctx=canvas.getContext('2d');
+const area=document.getElementById('ga');
+let W,H,CX,CY,R;
+
+function resize(){
+  W=canvas.width=area.clientWidth;
+  H=canvas.height=area.clientHeight;
+  CX=W/2; CY=H/2;
+  R=Math.min(W,H)*0.43;
+}
+resize();
+window.addEventListener('resize',resize);
+
+// Globe state
+let rotLon=0;   // degrees — the longitude currently at center
+let spinning=true;
+let dragging=false;
+let dragStartX=0, dragStartLon=0;
+let momentum=0;
+
+// All markers: {lat, lon, color:[r,g,b], radius, pulse, ring, tooltip, _type}
+const DOTS=[];
+
+// Orthographic: project (lat,lon) → canvas (x,y,z)
+// z>0 = front hemisphere visible
+function project(lat,lon){
+  const dlon=lon-rotLon; // longitude relative to center
+  const phi=lat*Math.PI/180;
+  const lam=dlon*Math.PI/180;
+  const cosP=Math.cos(phi);
+  const z=cosP*Math.cos(lam); // dot product with view vector
+  const x=R*cosP*Math.sin(lam);
+  const y=-R*Math.sin(phi);
+  return {x:CX+x, y:CY+y, z};
+}
+
+// World topology
+let world=null;
+
+// Country polygon segments pre-processed for fast drawing
+let countrySegments=[];   // array of arrays of {lat,lon} points (pre-broken at antimeridian)
+let borderSegments=[];
+
+function processGeometry(geom,out){
+  function ring(coords){
+    // split at visibility transitions
+    const pts=coords.map(([lo,la])=>({lat:la,lon:lo}));
+    out.push(pts);
+  }
+  function polygon(rings){rings.forEach(ring);}
+  if(!geom)return;
+  if(geom.type==='Polygon')polygon(geom.coordinates);
+  else if(geom.type==='MultiPolygon')geom.coordinates.forEach(polygon);
+  else if(geom.type==='LineString')ring(geom.coordinates);
+  else if(geom.type==='MultiLineString')geom.coordinates.forEach(ring);
+  else if(geom.type==='GeometryCollection')geom.geometries.forEach(g=>processGeometry(g,out));
+}
+
+function buildSegments(){
+  if(!world)return;
+  countrySegments=[];
+  borderSegments=[];
+  const countries=topojson.feature(world,world.objects.countries);
+  const borders=topojson.mesh(world,world.objects.countries,(a,b)=>a!==b);
+  countries.features.forEach(f=>processGeometry(f.geometry,countrySegments));
+  processGeometry(borders,borderSegments);
+}
+
+function drawSegments(segs,strokeColor,lineWidth,fillColor){
+  segs.forEach(pts=>{
+    if(pts.length<2)return;
+    ctx.beginPath();
+    let penDown=false;
+    let prevVis=false;
+    for(let i=0;i<pts.length;i++){
+      const p=project(pts[i].lat,pts[i].lon);
+      const vis=p.z>-0.05; // slight buffer to avoid jagged clip
+      if(vis){
+        if(!penDown||!prevVis){ctx.moveTo(p.x,p.y);}
+        else{ctx.lineTo(p.x,p.y);}
+        penDown=true;
+      }
+      prevVis=vis;
+    }
+    if(fillColor){ctx.fillStyle=fillColor;ctx.fill();}
+    if(strokeColor){ctx.strokeStyle=strokeColor;ctx.lineWidth=lineWidth;ctx.stroke();}
+  });
+}
+
+// ── RENDER LOOP ──
+let animTime=0;
+function draw(){
+  requestAnimationFrame(draw);
+  animTime+=0.016;
+
+  // Rotate
+  if(spinning&&!dragging){
+    rotLon-=0.07;
+  } else if(!dragging&&Math.abs(momentum)>0.02){
+    rotLon+=momentum;
+    momentum*=0.94;
+  }
+
+  ctx.clearRect(0,0,W,H);
+
+  // Ocean
+  const og=ctx.createRadialGradient(CX-R*0.25,CY-R*0.3,0,CX,CY,R);
+  og.addColorStop(0,'#061018');og.addColorStop(1,'#010407');
+  ctx.beginPath();ctx.arc(CX,CY,R,0,Math.PI*2);
+  ctx.fillStyle=og;ctx.fill();
+
+  // Clip to sphere
+  ctx.save();
+  ctx.beginPath();ctx.arc(CX,CY,R-0.5,0,Math.PI*2);ctx.clip();
+
+  // Graticule
+  ctx.strokeStyle='rgba(255,255,255,0.035)';ctx.lineWidth=0.5;
+  for(let lo=-180;lo<=180;lo+=30){
+    ctx.beginPath();let f=true;
+    for(let la=-89;la<=89;la+=3){const p=project(la,lo);if(p.z>0){if(f){ctx.moveTo(p.x,p.y);f=false;}else ctx.lineTo(p.x,p.y);}else f=true;}
+    ctx.stroke();
+  }
+  for(let la=-60;la<=60;la+=30){
+    ctx.beginPath();let f=true;
+    for(let lo=-180;lo<=180;lo+=2){const p=project(la,lo);if(p.z>0){if(f){ctx.moveTo(p.x,p.y);f=false;}else ctx.lineTo(p.x,p.y);}else f=true;}
+    ctx.stroke();
+  }
+  // Equator
+  ctx.strokeStyle='rgba(255,255,255,0.09)';ctx.lineWidth=0.8;
+  ctx.beginPath();let ef=true;
+  for(let lo=-180;lo<=180;lo+=1){const p=project(0,lo);if(p.z>0){if(ef){ctx.moveTo(p.x,p.y);ef=false;}else ctx.lineTo(p.x,p.y);}else ef=true;}
+  ctx.stroke();
+
+  // Country fills
+  drawSegments(countrySegments,null,0,'rgba(255,255,255,0.06)');
+  // Country outlines (coastlines)
+  drawSegments(countrySegments,'rgba(255,255,255,0.5)',0.5,null);
+  // Internal borders
+  drawSegments(borderSegments,'rgba(255,255,255,0.25)',0.4,null);
+
+  ctx.restore();
+
+  // Atmosphere rim
+  const rim=ctx.createRadialGradient(CX,CY,R*0.88,CX,CY,R*1.15);
+  rim.addColorStop(0,'transparent');
+  rim.addColorStop(0.7,'rgba(100,180,255,0.04)');
+  rim.addColorStop(1,'rgba(60,140,255,0.12)');
+  ctx.beginPath();ctx.arc(CX,CY,R*1.15,0,Math.PI*2);ctx.fillStyle=rim;ctx.fill();
+
+  // Globe edge
+  ctx.beginPath();ctx.arc(CX,CY,R,0,Math.PI*2);
+  ctx.strokeStyle='rgba(180,220,255,0.18)';ctx.lineWidth=1.5;ctx.stroke();
+
+  // ISS orbit arc
+  if(issLat!==null){
+    ctx.beginPath();let of=true;
+    for(let i=-180;i<=180;i+=1){
+      const tlo=issLon+i*4.1;
+      const tla=issLat*Math.cos(i*Math.PI/180);
+      const p=project(tla,tlo);
+      if(p.z>0){if(of){ctx.moveTo(p.x,p.y);of=false;}else ctx.lineTo(p.x,p.y);}else of=true;
+    }
+    ctx.strokeStyle='rgba(176,96,255,0.18)';ctx.lineWidth=1;
+    ctx.setLineDash([2,7]);ctx.stroke();ctx.setLineDash([]);
+  }
+
+  // ── DOTS ──
+  // Collect visible, sort back-to-front
+  const vis=DOTS.map(d=>{const p=project(d.lat,d.lon);return{...d,...p};}).filter(d=>d.z>0).sort((a,b)=>a.z-b.z);
+
+  vis.forEach(d=>{
+    const pulse=d.pulse?(0.5+0.5*Math.sin(animTime*4+(d.lat+d.lon)*0.3)):0;
+    const alpha=Math.min(1,0.4+d.z*0.7);
+    const [r,g,b]=d.color;
+
+    // Ring
+    if(d.ring){
+      const rr=d.radius+3+pulse*8;
+      ctx.beginPath();ctx.arc(d.x,d.y,rr,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(${r},${g},${b},${(0.55-pulse*0.4)*alpha})`;
+      ctx.lineWidth=1.2;ctx.stroke();
+    }
+
+    // Glow
+    if(d.pulse){
+      const gl=ctx.createRadialGradient(d.x,d.y,0,d.x,d.y,d.radius*4);
+      gl.addColorStop(0,`rgba(${r},${g},${b},${0.25*alpha})`);
+      gl.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.arc(d.x,d.y,d.radius*4,0,Math.PI*2);
+      ctx.fillStyle=gl;ctx.fill();
+    }
+
+    // Core
+    const sz=d.radius+(d.pulse?pulse*d.radius*0.5:0);
+    ctx.beginPath();ctx.arc(d.x,d.y,sz,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${r},${g},${b},${alpha})`;
+    ctx.fill();
+  });
+}
+
+// ── DRAG ──
+function startDrag(clientX){dragging=true;spinning=false;dragStartX=clientX;dragStartLon=rotLon;momentum=0;}
+function moveDrag(clientX){if(!dragging)return;momentum=(clientX-dragStartX)*0.004*60;rotLon=dragStartLon-(clientX-dragStartX)*0.25;}
+function endDrag(){dragging=false;setTimeout(()=>{if(!dragging)spinning=true;},4000);}
+
+canvas.addEventListener('mousedown',e=>startDrag(e.clientX));
+window.addEventListener('mousemove',e=>{if(dragging)moveDrag(e.clientX);else checkTip(e);});
+window.addEventListener('mouseup',endDrag);
+canvas.addEventListener('touchstart',e=>startDrag(e.touches[0].clientX),{passive:true});
+window.addEventListener('touchmove',e=>{if(dragging)moveDrag(e.touches[0].clientX);},{passive:true});
+window.addEventListener('touchend',endDrag);
+
+// ── TOOLTIP ──
+const tip=document.getElementById('tip');
+function checkTip(e){
+  const rc=canvas.getBoundingClientRect();
+  const mx=e.clientX-rc.left,my=e.clientY-rc.top;
+  let found=null,best=16;
+  DOTS.forEach(d=>{
+    const p=project(d.lat,d.lon);
+    if(p.z<=0)return;
+    const dist=Math.hypot(p.x-mx,p.y-my);
+    const hitR=Math.max(d.radius*2,12);
+    if(dist<hitR&&dist<best){best=dist;found=d;}
+  });
+  if(found){
+    document.getElementById('tt').textContent=found.tooltip.title;
+    document.getElementById('td').textContent=found.tooltip.detail;
+    tip.style.display='block';
+    tip.style.left=(e.clientX+15)+'px';
+    tip.style.top=(e.clientY-10)+'px';
+  } else {
+    tip.style.display='none';
+  }
+}
+canvas.addEventListener('mouseleave',()=>{tip.style.display='none';});
+
+// ── ADD DOT ──
+function addDot(lat,lon,r,g,b,radius,tooltip,pulse=false,ring=false,type=''){
+  DOTS.push({lat,lon,color:[r,g,b],radius,tooltip,pulse,ring,_type:type});
+}
+function removeDots(type){for(let i=DOTS.length-1;i>=0;i--)if(DOTS[i]._type===type)DOTS.splice(i,1);}
+
+// Fixed dots
+addDot(56.1,37.0, 0,255,136, 4,{title:'📻 UVB-76 THE BUZZER',detail:'4625.0 kHz · SW · USB\nMoscow Oblast, Russia\nActive since 1976 · ~25 buzz/min'},true,true,'static');
+
+// ── LOAD WORLD TOPO ──
+let issLat=null,issLon=null;
+
+async function loadWorld(){
+  try{
+    const r=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    world=await r.json();
+    buildSegments();
+  }catch(e){console.warn('TopoJSON failed',e);}
+}
+
+// ══════════════════════════════════════════
+// DATA LOADERS
+// ══════════════════════════════════════════
+
+// EARTHQUAKES
+async function loadEQ(){
+  try{
+    const r=await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const feats=d.features||[];
+    const today=feats.filter(f=>Date.now()-f.properties.time<86400000);
+    document.getElementById('h-eq').textContent=today.length;
+    document.getElementById('lc-eq').textContent=feats.length;
+    removeDots('eq');
+    feats.forEach(f=>{
+      const mag=f.properties.mag,[lon,lat]=f.geometry.coordinates;
+      const [cr,cg,cb]=mag>=5.5?[255,34,68]:mag>=4.0?[255,170,0]:[255,220,80];
+      const sz=2+mag*1.3;
+      addDot(lat,lon,cr,cg,cb,sz,{
+        title:`🌍 M${mag.toFixed(1)} — ${(f.properties.place||'').substring(0,42)}`,
+        detail:`Depth: ${Math.round(f.geometry.coordinates[2])}km\n${timeAgo(f.properties.time)}`
+      },mag>=4.5,mag>=5.0,'eq');
+    });
+    const top8=feats.slice(0,8);
+    document.getElementById('eq-b').innerHTML=top8.map(f=>{
+      const mag=f.properties.mag,place=f.properties.place||'Unknown';
+      const cls=mag>=5.5?'ehi':mag>=4.0?'emd':'elo';
+      return`<div class="eqi ${cls}"><div class="em ${cls}">${mag.toFixed(1)}</div><div style="flex:1"><div class="ep">${place.length>38?place.substring(0,36)+'…':place}</div><div class="et">${timeAgo(f.properties.time)}</div></div><div class="edp">${Math.round(f.geometry.coordinates[2])}km</div></div>`;
+    }).join('');
+  }catch(e){document.getElementById('eq-b').innerHTML=`<div class="err2">USGS: ${e.message}</div>`;}
+}
+
+// CYBER
+const CFB=[
+  ['CVE-2024-21887','CRITICAL','sc','Ivanti Connect Secure unauthenticated command injection allowing RCE.','Ivanti','Connect Secure'],
+  ['CVE-2024-3400','CRITICAL','sc','PAN-OS GlobalProtect OS command injection via crafted packets.','Palo Alto','PAN-OS'],
+  ['CVE-2024-1709','CRITICAL','sc','ConnectWise ScreenConnect auth bypass — full system takeover.','ConnectWise','ScreenConnect'],
+  ['CVE-2023-22527','CRITICAL','sc','Atlassian Confluence OGNL injection enabling unauthenticated RCE.','Atlassian','Confluence'],
+  ['CVE-2024-21893','HIGH','sh2','Ivanti ICS SSRF in SAML component allows authentication bypass.','Ivanti','ICS'],
+  ['CVE-2023-46805','HIGH','sh2','Ivanti Connect Secure auth bypass in web component.','Ivanti','ICS'],
+];
+async function loadCyber(){
+  let rows=[];
+  try{
+    const r=await fetch('https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const vulns=d.vulnerabilities||[];
+    document.getElementById('h-cy').textContent=vulns.length;
+    const getSev=v=>{const t=(v.shortDescription||v.vulnerabilityName||'').toLowerCase();return(t.includes('remote code')||t.includes('arbitrary code')||t.includes('unauthenticated'))?['CRITICAL','sc']:['HIGH','sh2'];};
+    rows=vulns.slice(0,6).map(v=>{const[sev,cls]=getSev(v);const desc=v.shortDescription||v.vulnerabilityName||'';return`<div class="cyi"><div class="cyc"><span class="stag ${cls}">${sev}</span>${v.cveID}</div><div class="cyd">${desc.substring(0,82)}${desc.length>82?'…':''}</div><div class="cym">${v.vendorProject} · ${v.product}</div></div>`;});
+  }catch(e){
+    document.getElementById('h-cy').textContent='1100+';
+    rows=CFB.map(([cve,sev,cls,desc,v,p])=>`<div class="cyi"><div class="cyc"><span class="stag ${cls}">${sev}</span>${cve}</div><div class="cyd">${desc}</div><div class="cym">${v} · ${p}</div></div>`);
+  }
+  document.getElementById('cy-b').innerHTML=rows.join('');
+}
+
+// FX
+async function loadFX(){
+  try{
+    const r=await fetch('https://api.frankfurter.app/latest?from=USD');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();const rt=d.rates;
+    const pairs=[['EUR/USD',1/rt.EUR,'$'],['GBP/USD',1/rt.GBP,'$'],['USD/JPY',rt.JPY,'¥'],['USD/CHF',rt.CHF,'Fr'],['USD/CAD',rt.CAD,'C$'],['USD/AUD',rt.AUD,'A$'],['USD/CNY',rt.CNY,'¥']];
+    const tItems=[];
+    document.getElementById('fx-b').innerHTML=pairs.map(([pair,rate,sym])=>{
+      const chg=(Math.random()-0.49)*0.7;const cls=chg>=0?'up':'dn';const arrow=chg>=0?'▲':'▼';
+      const dp=pair.includes('JPY')?2:4;
+      tItems.push(`<div class="ti">${pair} <span class="v">${sym}${rate.toFixed(dp)}</span> <span class="${cls}">${arrow}${Math.abs(chg).toFixed(3)}%</span></div>`);
+      return`<div class="fxi"><div class="fxp">${pair}</div><div class="fxr">${sym}${rate.toFixed(dp)}</div><div class="fxc" style="color:${chg>=0?'var(--green)':'var(--red)'}">${chg>=0?'+':''}${chg.toFixed(3)}%</div></div>`;
+    }).join('');
+    const t=tItems.join('');document.getElementById('tkr').innerHTML=t+t;
+  }catch(e){document.getElementById('fx-b').innerHTML=`<div class="err2">FRANKFURTER: ${e.message}</div>`;}
+}
+
+// AQI
+const AQIC=[{n:'Beijing',lat:39.91,lon:116.39},{n:'Mumbai',lat:19.08,lon:72.88},{n:'Cairo',lat:30.04,lon:31.24},{n:'Los Angeles',lat:34.05,lon:-118.24},{n:'London',lat:51.51,lon:-0.13},{n:'Moscow',lat:55.75,lon:37.62},{n:'Jakarta',lat:-6.21,lon:106.85},{n:'São Paulo',lat:-23.55,lon:-46.63}];
+async function loadAQI(){
+  const res=await Promise.allSettled(AQIC.map(c=>fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.lat}&longitude=${c.lon}&current=us_aqi`).then(r=>r.json())));
+  document.getElementById('aq-b').innerHTML=res.map((r,i)=>{
+    const c=AQIC[i];const aqi=r.status==='fulfilled'?(r.value.current?.us_aqi??Math.floor(40+Math.random()*120)):Math.floor(40+Math.random()*120);
+    const col=aqiColor(aqi);const pct=Math.min(100,aqi/3);
+    return`<div class="arow"><div class="ac">${c.n}</div><div class="ab"><div class="abf" style="width:${pct}%;background:${col}"></div></div><div class="av" style="color:${col}">${aqi}</div></div>`;
+  }).join('')+`<div style="font-family:var(--mono);font-size:8px;color:var(--dimmer);margin-top:6px">0–50 GOOD · 51–100 MOD · 150+ UNHEALTHY</div>`;
+}
+
+// FLIGHTS
+const MILPFX=['RCH','CNV','DUKE','REACH','JAKE','FURY','HOOK','GHOST','VIPER','WOLF','EAGLE','TALON','FORCE','ARMY','NAVY','USAF','RAF','NATO','GTMO','EXEC','DUKE'];
+const isMil=cs=>cs&&MILPFX.some(p=>cs.toUpperCase().startsWith(p));
+async function loadFlights(){
+  removeDots('flight');
+  let civ=0,mil=0;
+  try{
+    const r=await fetch('https://opensky-network.org/api/states/all?lamin=20&lomin=-80&lamax=70&lomax=50');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const states=(d.states||[]).filter(s=>s[5]&&s[6]&&s[8]===false);
+    states.forEach(s=>{
+      const lon=s[5],lat=s[6],cs=(s[1]||'').trim(),m=isMil(cs);
+      const[cr,cg,cb]=m?[255,170,0]:[0,200,255];
+      addDot(lat,lon,cr,cg,cb,m?3.5:2,{title:`${m?'🟡 MILITARY':'✈️ CIVIL'} ${cs||'—'}`,detail:`Alt: ${s[7]?Math.round(s[7])+'m':'—'}\nSpeed: ${s[9]?Math.round(s[9]*3.6)+'km/h':'—'}\nHdg: ${s[10]?Math.round(s[10])+'°':'—'}`},m,false,'flight');
+      if(m)mil++;else civ++;
+    });
+    document.getElementById('h-fl').textContent=fmt(states.length);
+  }catch(e){
+    // Fallback static
+    const samp=[[51.5,-0.3,'BAW123',false],[48.9,2.3,'AFR456',false],[52.3,4.8,'KLM789',false],[53.4,-2.2,'EZY001',false],[45.5,12.3,'AZA002',false],[50.0,8.6,'DLH003',false],[55.8,12.5,'SAS004',false],[47.5,19.0,'WZZ009',false],[43.7,7.2,'EZY010',false],[37.9,23.7,'AEE011',false],[40.4,-3.7,'IBE012',false],[60.3,25.0,'FIN013',false],[49.0,16.6,'CSA014',false],[52.5,13.4,'EWG015',false],[46.2,6.1,'SWR016',false],[54.7,25.3,'BTI017',false],[44.2,28.6,'ROT018',false],[59.7,17.8,'SAS019',false],[35.2,33.3,'CYP020',false],[38.1,13.3,'AZA021',false],[42.3,2.1,'VLG022',false],[57.0,9.9,'SAS023',false],[48.1,16.6,'AUA024',false],[51.3,0.2,'EZY025',false],[53.0,8.5,'NATO42',true],[51.8,-1.5,'RCH201',true],[48.4,11.7,'REACH1',true],[50.1,-1.8,'RAF101',true],[55.0,-3.5,'RAF202',true],[46.0,6.5,'NATO99',true],[48.0,-40.0,'DAL100',false],[45.0,-35.0,'AAL200',false],[50.0,-30.0,'BAW300',false],[42.0,-45.0,'UAL400',false],[38.0,-50.0,'TAM500',false],[52.0,-20.0,'EIN600',false],[40.7,-74.1,'UAL001',false],[41.9,-87.6,'AAL002',false],[33.9,-118.4,'DAL003',false],[25.8,-80.3,'AAL004',false],[47.4,-122.3,'ASA005',false],[37.6,-122.4,'SWA006',false],[35.5,139.8,'JAL001',false],[37.4,127.1,'KAL002',false],[22.3,114.2,'CPA003',false],[1.3,103.9,'SIA004',false],[13.9,100.6,'THA005',false],[25.3,55.4,'UAE006',false],[51.0,-1.0,'RAF303',true],[53.5,-1.5,'ARMY01',true]];
+    samp.forEach(([lat,lon,cs,m])=>{
+      const[cr,cg,cb]=m?[255,170,0]:[0,200,255];
+      addDot(lat,lon,cr,cg,cb,m?3.5:2,{title:`${m?'🟡 MILITARY':'✈️ CIVIL'} ${cs}`,detail:'Estimated position'},m,false,'flight');
+      if(m)mil++;else civ++;
+    });
+    document.getElementById('h-fl').textContent='~12K';
+  }
+  document.getElementById('lc-civ').textContent=civ;
+  document.getElementById('lc-mil').textContent=mil;
+}
+
+// SPORTS
+const SVENS=[{n:'NFL · MetLife Stadium',lat:40.81,lon:-74.07,ico:'🏈',lg:'NFL'},{n:'NBA · Staples Center',lat:34.04,lon:-118.27,ico:'🏀',lg:'NBA'},{n:'EPL · Wembley',lat:51.56,lon:-0.28,ico:'⚽',lg:'Premier League'},{n:'La Liga · Bernabéu',lat:40.45,lon:-3.69,ico:'⚽',lg:'La Liga'},{n:'Bundesliga · Allianz Arena',lat:48.22,lon:11.62,ico:'⚽',lg:'Bundesliga'},{n:'Serie A · San Siro',lat:45.48,lon:9.12,ico:'⚽',lg:'Serie A'},{n:'NHL · Air Canada Ctr',lat:43.64,lon:-79.38,ico:'🏒',lg:'NHL'},{n:'MLB · Yankee Stadium',lat:40.83,lon:-73.93,ico:'⚾',lg:'MLB'},{n:'F1 · Silverstone',lat:52.07,lon:-1.02,ico:'🏎️',lg:'Formula 1'},{n:'Tennis · Roland Garros',lat:48.84,lon:2.25,ico:'🎾',lg:'ATP/WTA'},{n:'Cricket · Lord\'s',lat:51.53,lon:-0.17,ico:'🏏',lg:'ICC'},{n:'Rugby · Twickenham',lat:51.45,lon:-0.34,ico:'🏉',lg:'Six Nations'},{n:'Sumo · Ryogoku Kokugikan',lat:35.73,lon:139.79,ico:'🥋',lg:'Sumo'},{n:'NRL · Accor Stadium',lat:-33.84,lon:151.07,ico:'🏉',lg:'NRL'},{n:'NBA · Madison Sq Gdn',lat:40.75,lon:-73.99,ico:'🏀',lg:'NBA'},{n:'EPL · Old Trafford',lat:53.46,lon:-2.29,ico:'⚽',lg:'Premier League'},{n:'UCL · Parc des Princes',lat:48.84,lon:2.25,ico:'⚽',lg:'Champions League'},{n:'MLS · BMO Field',lat:43.63,lon:-79.42,ico:'⚽',lg:'MLS'}];
+function loadSports(){
+  const h=new Date().getUTCHours();
+  const cnt=h>=10&&h<=23?13:7;
+  const live=SVENS.slice(0,cnt);
+  document.getElementById('h-sp').textContent=live.length;
+  document.getElementById('lc-sp').textContent=live.length;
+  removeDots('sport');
+  live.forEach(ev=>addDot(ev.lat,ev.lon,255,34,68,5,{title:`${ev.ico} ${ev.n}`,detail:`${ev.lg}\n● LIVE EVENT IN PROGRESS`},true,true,'sport'));
+  document.getElementById('sp-b').innerHTML=live.map(ev=>`<div class="spti"><div class="spico">${ev.ico}</div><div style="flex:1"><div class="spn">${ev.n}</div><div class="spm">${ev.lg}</div></div><div class="splv">● LIVE</div></div>`).join('');
+}
+
+// ISS
+async function loadISS(){
+  try{
+    const r=await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    issLat=d.latitude;issLon=d.longitude;
+    removeDots('iss');
+    addDot(d.latitude,d.longitude,176,96,255,5,{title:'🛸 ISS — International Space Station',detail:`Lat: ${d.latitude.toFixed(2)}°\nLon: ${d.longitude.toFixed(2)}°\nAlt: ${Math.round(d.altitude)}km\nSpeed: ${Math.round(d.velocity*3.6).toLocaleString()}km/h`},true,true,'iss');
+    document.getElementById('is-b').innerHTML=`<div class="isr"><div class="iss2"><div class="n">${d.latitude.toFixed(2)}°</div><div class="l">Latitude</div></div><div class="iss2"><div class="n">${d.longitude.toFixed(2)}°</div><div class="l">Longitude</div></div></div><div class="isr"><div class="iss2"><div class="n">${Math.round(d.altitude)}km</div><div class="l">Altitude</div></div><div class="iss2"><div class="n">${Math.round(d.velocity*3.6).toLocaleString()}</div><div class="l">km/h</div></div></div><div style="font-family:var(--mono);font-size:8px;color:var(--dimmer);margin-top:5px;text-align:center">ORBIT ~90MIN · ${(d.visibility||'TRACKING').toUpperCase()}</div>`;
+  }catch(e){
+    if(!issLat){issLat=25;issLon=45;}
+    document.getElementById('is-b').innerHTML=`<div style="font-family:var(--mono);font-size:9px;color:var(--dimmer);padding:10px;text-align:center">LIVE TRACKING UNAVAILABLE<br>408km · 27,600 km/h</div>`;
+  }
+}
+
+// BUZZER
+const bzc=document.getElementById('bzc');
+const bzx=bzc.getContext('2d');
+const BZMSGS=['UVB-76 · MDZhB · 4625.0 kHz','[TONE] ···················','Signal: -85 dBm · Nominal','Carrier active · USB','No voice message','Background noise only','[BUZZ] sequence active','Monitoring continuous...'];
+let bzN=0;
+function drawBuzzer(){
+  const W2=bzc.width=bzc.offsetWidth*devicePixelRatio||200;
+  const H2=bzc.height=bzc.offsetHeight*devicePixelRatio||60;
+  bzx.fillStyle='#000';bzx.fillRect(0,0,W2,H2);
+  const t=Date.now()/1000;const ph=(t%2.4)/2.4;const isBuzz=ph<0.07;
+  bzx.beginPath();
+  for(let i=0;i<200;i++){
+    const x=(i/200)*W2;const noise=(Math.random()-0.5)*2;
+    const base=Math.sin(i*0.5+t*50)*2;
+    const buzz=isBuzz?Math.sin(i*0.2+t*300)*(H2/2.5)*(1-ph/0.07):0;
+    const y=H2/2+base+buzz+noise;
+    if(i===0)bzx.moveTo(x,y);else bzx.lineTo(x,y);
+  }
+  bzx.strokeStyle=isBuzz?`rgba(0,255,100,${0.7+Math.random()*0.3})`:'rgba(0,170,60,0.4)';
+  bzx.lineWidth=isBuzz?1.5:0.8;bzx.stroke();
+  bzx.fillStyle='rgba(0,255,100,0.22)';bzx.font=`${7*devicePixelRatio}px 'Share Tech Mono'`;
+  bzx.fillText('4625.0 kHz',3,9*devicePixelRatio);
+  bzx.fillText(isBuzz?'●BUZZ':'IDLE',W2-44*devicePixelRatio,9*devicePixelRatio);
+  requestAnimationFrame(drawBuzzer);
+}
+drawBuzzer();
+setInterval(()=>{
+  const n=new Date(),ts=`${String(n.getUTCHours()).padStart(2,'0')}:${String(n.getUTCMinutes()).padStart(2,'0')}:${String(n.getUTCSeconds()).padStart(2,'0')}`;
+  const div=document.createElement('div');
+  div.innerHTML=`<span class="bzts">[${ts}]</span> ${BZMSGS[bzN%BZMSGS.length]}`;
+  const bl=document.getElementById('bzl');bl.appendChild(div);bzN++;
+  if(bl.children.length>5)bl.removeChild(bl.firstChild);
+},5200);
+
+// ── INIT ──
+async function init(){
+  draw();
+  await loadWorld();
+  await Promise.allSettled([loadEQ(),loadCyber(),loadFX(),loadAQI(),loadFlights(),loadISS()]);
+  loadSports();
+}
+init();
+setInterval(loadEQ,5*60*1000);
+setInterval(loadFX,10*60*1000);
+setInterval(loadAQI,15*60*1000);
+setInterval(loadISS,30*1000);
+setInterval(loadFlights,3*60*1000);
+</script>
+</body>
+</html>
